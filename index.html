@@ -94,8 +94,8 @@
                     { text: "Psicologia e Pensamento Computacional: gosto de compreender as pessoas e transmitir conhecimento técnico.", type: "licenciatura" },
                     { text: "Matemática e Lógica de Programação: gosto de raciocinar em desafios abstratos.", type: "ciencia" },
                     { text: "Administração e Banco de Dados: gosto de entender processos de trabalho e fluxos práticos.", type: "sistemas" },
-                    { text: "Física e eletricidade: gosto de entender a matéria e componentes eletrônicos funcionando na prática.", type: "engenharia" }
-                    { text: "Gostaria de estudar um pouco de cada, idependente da área de conhecimento.", type: "bi" },
+                    { text: "Física e eletricidade: gosto de entender a matéria e componentes eletrônicos funcionando na prática.", type: "engenharia" },
+                    { text: "Gostaria de estudar um pouco de cada, independente da área de conhecimento.", type: "bi" }
                 ]
             },
             {
@@ -238,7 +238,7 @@
                         )}
                     </div>
                     
-                    {}
+                    {/* Rodapé institucional com Brasão Oficial */}
                     <footer className="bg-gray-50 px-8 py-6 flex justify-between items-center border-t border-gray-100">
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Congresso UFBA 80 anos</span>
                         <img 
@@ -246,7 +246,6 @@
                             className="h-10 opacity-60 hover:opacity-100 transition-all duration-300" 
                             alt="Brasão UFBA"
                             onError={(e) => {
-                                // Fallback seguro caso a imagem externa falhe por rede lenta
                                 e.target.style.display = 'none'; 
                             }}
                         />
