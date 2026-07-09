@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Carreira TI - UFBA</title>
+    <!-- STREAMING_CHUNK: Importando Tailwind CSS e bibliotecas do React -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: #fef8fa; 
+            color: #1a1a1a; 
+        }
+        .fade-in { 
+            animation: fadeIn 0.4s ease-out; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: scale(0.98); } 
+            to { opacity: 1; transform: scale(1); } 
+        }
+        .card-shadow { 
+            box-shadow: 0 20px 50px -12px rgba(218, 67, 137, 0.15); 
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div id="root" class="w-full max-w-xl"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        /* STREAMING_CHUNK: Estruturando os dados dos cursos com descrições amigáveis */
+        const courses = {
+            licenciatura: {
+                name: "Licenciatura em Computação",
+                profile: "O Educador Tecnológico",
+                description: "Seu foco é a transformação social. Você vai criar softwares educativos, jogos didáticos e ensinar as pessoas de todas as idades a dominarem a tecnologia para melhorar o mundo.",
+                tip: "Gosta de ajudar os outros, fazer apresentações ou explicar ideias? Esse curso é fantástico para você!"
+            },
+            ciencia: {
+                name: "Ciência da Computação",
+                profile: "O Especialista em Softwares e Inteligência",
+                description: "Seu foco é a lógica pura e a criação inteligente. Você vai desenvolver algoritmos complexos, criar novos softwares e estruturar sistemas de Inteligência Artificial para resolver grandes problemas digitais.",
+                tip: "Se você adora resolver desafios matemáticos e desvendar regras de lógica pura, esse é o seu lugar!"
+            },
+            sistemas: {
+                name: "Sistemas de Informação",
+                profile: "O Estrategista e Gestor de Projetos",
+                description: "Seu foco é fazer a tecnologia funcionar de forma eficiente no mundo real. Você vai projetar sistemas práticos, organizar grandes bancos de dados de forma segura e liderar equipes de desenvolvimento.",
+                tip: "Ideal para quem quer aprender sobre programação, mas também adora liderança, estratégia de negócios e Scrum!"
+            },
+            engenharia: {
+                name: "Engenharia de Computação",
+                profile: "O Arquiteto de Hardware e Circuitos",
+                description: "Seu foco é a união perfeita da eletrônica física com o software. Você vai projetar microchips, placas de circuito integrado e os códigos que dão vida a dispositivos inteligentes (como robôs, drones e internet das coisas).",
+                tip: "Dica: Não confunda com mecânica ou motores industriais clássicos. Aqui o foco é eletrônica digital e hardware!"
+            },
+            bi: {
+                name: "BI em Ciência e Tecnologia",
+                profile: "O Explorador Interdisciplinar",
+                description: "Seu foco é a liberdade de escolha. Este curso oferece uma formação universitária flexível na UFBA, permitindo que você experimente disciplinas de várias áreas de TI antes de escolher sua especialização definitiva.",
+                tip: "Ideal se você ama tecnologia mas ainda quer um tempo para descobrir qual das áreas específicas mais te atrai!"
+            }
+        };
+
+        /* STREAMING_CHUNK: Definindo as perguntas adaptadas para visitantes do ensino médio */
+        const questions = [
+            {
+                text: "Qual dessas atividades mais te empolga?",
+                options: [
+                    { text: "Entender como placas de circuito, chips e a eletrônica de um computador funcionam por dentro.", type: "engenharia" },
+                    { text: "Criar códigos e lógica do zero para resolver grandes enigmas matemáticos (como criar o algoritmo de uma inteligência artificial).", type: "ciencia" },
+                    { text: "Organizar as etapas de um projeto de tecnologia, definindo como o sistema vai funcionar e coordenando o trabalho da equipe.", type: "sistemas" },
+                    { text: "Explicar ideias complexas de forma simples para as pessoas e ver a tecnologia transformar a forma como elas aprendem.", type: "licenciatura" },
+                    { text: "Explorar várias áreas, estudar assuntos diferentes e ter tempo para escolher a minha profissão ideal.", type: "bi" }
+                ]
+            },
+            {
+                text: "O que mais te atrai quando você pensa no mundo da tecnologia?",
+                options: [
+                    { text: "Ver como a eletricidade física vira informação útil dentro de um componente eletrônico digital.", type: "engenharia" },
+                    { text: "O desafio de desvendar a lógica matemática pura oculta nos bastidores de grandes códigos.", type: "ciencia" },
+                    { text: "Como os aplicativos e plataformas organizam milhares de dados reais dos usuários de forma segura.", type: "sistemas" },
+                    { text: "A possibilidade de usar sites e plataformas interativas para ajudar as pessoas a se desenvolverem.", type: "licenciatura" },
+                    { text: "A flexibilidade de conectar a tecnologia com outros ramos como gestão, artes ou ciências sociais.", type: "bi" }
+                ]
+            },
+            {
+                text: "Qual dessas disciplinas ou assuntos escolares mais te interessa?",
+                options: [
+                    { text: "Física e eletricidade: gosto de entender a matéria e componentes eletrônicos funcionando na prática.", type: "engenharia" },
+                    { text: "Matemática avançada e enigmas lógicos: gosto de raciocinar em desafios abstratos.", type: "ciencia" },
+                    { text: "Organização e dinâmica social: gosto de entender processos de trabalho e fluxos práticos.", type: "sistemas" },
+                    { text: "Psicologia e comunicação: gosto de compreender as pessoas e transmitir conhecimento técnico.", type: "licenciatura" },
+                    { text: "Gostaria de ter um cardápio variado de matérias sem precisar fechar portas logo no primeiro dia.", type: "bi" }
+                ]
+            },
+            {
+                text: "Se você fosse criar um produto hoje, seu principal foco seria construir:",
+                options: [
+                    { text: "A placa física inteligente de um novo drone ou um robô autônomo.", type: "engenharia" },
+                    { text: "O cérebro computacional inteligente (motor de busca rápido, IA que gera imagens, etc.).", type: "ciencia" },
+                    { text: "A estrutura de funcionamento e o banco de dados de um aplicativo gigante, como o sistema de entregas do iFood.", type: "sistemas" },
+                    { text: "Uma nova plataforma interativa voltada para capacitação e educação online.", type: "licenciatura" },
+                    { text: "Uma solução inovadora que integre as necessidades tecnológicas com outras frentes do mercado.", type: "bi" }
+                ]
+            }
+        ];
+
+        /* STREAMING_CHUNK: Implementando o fluxo lógico do aplicativo React */
+        function App() {
+            const [step, setStep] = useState('welcome');
+            const [currentQ, setCurrentQ] = useState(0);
+            const [votos, setVotos] = useState({ licenciatura: 0, ciencia: 0, sistemas: 0, engenharia: 0, bi: 0 });
+
+            const responder = (type) => {
+                setVotos({ ...votos, [type]: votos[type] + 1 });
+                if (currentQ < questions.length - 1) {
+                    setCurrentQ(currentQ + 1);
+                } else {
+                    setStep('result');
+                }
+            };
+
+            const getVencedor = () => {
+                return Object.keys(votos).reduce((a, b) => votos[a] > votos[b] ? a : b);
+            };
+
+            const reiniciar = () => {
+                setVotos({ licenciatura: 0, ciencia: 0, sistemas: 0, engenharia: 0, bi: 0 });
+                setCurrentQ(0);
+                setStep('welcome');
+            };
+
+            /* STREAMING_CHUNK: Renderizando a interface visual do Quiz com as cores #da4389 */
+            return (
+                <div className="bg-white rounded-[32px] overflow-hidden card-shadow border border-pink-50/50 fade-in">
+                    
+                    {/* Header com a cor oficial do projeto do Canva (#da4389) */}
+                    <header className="bg-[#da4389] pt-10 pb-12 px-8 text-white text-center">
+                        <div className="flex justify-center mb-4">
+                            <div className="w-12 h-1 bg-white opacity-40 rounded-full"></div>
+                        </div>
+                        <h1 className="text-3xl font-black tracking-tight uppercase">UFBA <span className="font-light">TI</span></h1>
+                        <p className="text-[#f7cfe2] text-xs font-bold uppercase tracking-[0.3em] mt-2 italic">Descubra seu Futuro no Congresso</p>
+                    </header>
+
+                    <div className="p-8 md:p-10 -mt-8 bg-white rounded-t-[40px] relative">
+                        
+                        {/* Tela de Boas-Vindas */}
+                        {step === 'welcome' && (
+                            <div className="text-center space-y-8">
+                                <div className="space-y-4">
+                                    <h2 className="text-2xl font-extrabold text-gray-800">Seja Bem-vindo!</h2>
+                                    <p className="text-gray-500 text-sm leading-relaxed">
+                                        Escolher um curso de Tecnologia pode parecer desafiador para quem está conhecendo a área agora. Responda estas 4 perguntas rápidas de interesses práticos e descubra qual curso da UFBA combina mais com você!
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => setStep('quiz')}
+                                    className="w-full bg-[#da4389] hover:bg-[#b83170] text-white font-bold py-5 rounded-2xl transition-all shadow-md active:scale-[0.98]"
+                                >
+                                    Começar Quiz (4 perguntas)
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Tela de Perguntas */}
+                        {step === 'quiz' && (
+                            <div className="space-y-6 fade-in">
+                                <div className="flex items-center justify-between gap-4">
+                                    <span className="text-xs font-black text-[#da4389]">PASSO {currentQ + 1} DE {questions.length}</span>
+                                    <div className="flex-1 h-1.5 bg-pink-50 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-[#da4389] transition-all duration-300" 
+                                            style={{width: `${((currentQ + 1) / questions.length) * 100}%`}}
+                                        ></div>
+                                    </div>
+                                </div>
+                                
+                                <h2 className="text-xl font-bold text-gray-800 leading-tight">
+                                    {questions[currentQ].text}
+                                </h2>
+
+                                <div className="space-y-3">
+                                    {questions[currentQ].options.map((opt, i) => (
+                                        <button 
+                                            key={i}
+                                            onClick={() => responder(opt.type)}
+                                            className="w-full text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-[#da4389] hover:bg-[#fef4f8] transition-all text-gray-600 font-semibold text-sm flex items-center justify-between group"
+                                        >
+                                            <span className="pr-4">{opt.text}</span>
+                                            <span className="text-[#da4389] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Tela de Resultado Final */}
+                        {step === 'result' && (
+                            <div className="text-center space-y-8 fade-in">
+                                <div className="space-y-2">
+                                    <p className="text-[#da4389] font-bold uppercase tracking-widest text-[10px]">O curso sugerido para você é:</p>
+                                    <h2 className="text-3xl font-black text-gray-900 leading-none py-2">
+                                        {courses[getVencedor()].name}
+                                    </h2>
+                                    <div className="inline-block px-4 py-1.5 bg-[#da4389] text-white rounded-xl text-xs font-bold">
+                                        {courses[getVencedor()].profile}
+                                    </div>
+                                </div>
+
+                                <div className="bg-[#fef4f8] p-6 rounded-[2rem] border-2 border-[#fcdbe8] text-left">
+                                    <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                                        {courses[getVencedor()].description}
+                                    </p>
+                                    <div className="bg-white/75 p-4 rounded-xl border border-[#fcdbe8]/50">
+                                        <p className="text-[#da4389] font-black text-[10px] uppercase mb-1">Dica Importante:</p>
+                                        <p className="text-[#8c2354] font-medium text-xs italic">
+                                            "{courses[getVencedor()].tip}"
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <button 
+                                        onClick={reiniciar}
+                                        className="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl hover:bg-black transition-all"
+                                    >
+                                        Refazer Teste
+                                    </button>
+                                    <p className="text-[10px] text-gray-400 font-medium max-w-xs mx-auto">
+                                        Lembre-se: Este teste serve como orientação inicial. Venha bater um papo com nossos estudantes e professores no congresso para tirar suas dúvidas!
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Rodapé institucional com UFBA integrado */}
+                    <footer className="bg-gray-50 px-8 py-6 flex justify-between items-center border-t border-gray-100">
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Congresso UFBA 2026</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/pt/2/28/Logo_UFBA.png" className="h-8 opacity-30 grayscale hover:grayscale-0 transition-opacity" alt="UFBA" />
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
